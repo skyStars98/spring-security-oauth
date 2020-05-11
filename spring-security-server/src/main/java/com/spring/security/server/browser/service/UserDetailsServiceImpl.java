@@ -1,11 +1,12 @@
 package com.spring.security.server.browser.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @Author: daiguoqing
@@ -13,9 +14,9 @@ import org.springframework.stereotype.Component;
  * @Time: 3:02 下午
  * @Version: spring-security-oauth 1.0
  */
-@Component
 @Slf4j
-public class DataBaseUserDetailsService implements UserDetailsService {
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     /**
      * @desc disabled：账号是否可用 accountExpired：账号是否过期
@@ -27,7 +28,7 @@ public class DataBaseUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("登录用户名：{}", username);
-        return User.withUsername(username).password("{noop}123456").authorities("Admin")
+        return User.withUsername(username).password("{noop}123456").authorities(AuthorityUtils.commaSeparatedStringToAuthorityList("Admin"))
                 .disabled(false).accountExpired(false).credentialsExpired(false).accountLocked(false).build();
     }
 }

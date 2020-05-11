@@ -1,11 +1,7 @@
 package com.spring.security.server.browser.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +26,7 @@ public class SecurityAuthenticationFailureHandler extends SimpleUrlAuthenticatio
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.info("登陆失败");
+        log.info("失败信息：{}", exception.getMessage());
         super.onAuthenticationFailure(request, response, exception);
     }
 }
