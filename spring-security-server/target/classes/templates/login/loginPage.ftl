@@ -8,13 +8,16 @@
     <title>登陆</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+    <style>
+        .error{color: rgba(255, 0, 0, 1)}
+    </style>
 </head>
 <body>
     <div class="container">
         <form class="form-signin" method="post" action="/login/authentication">
             <h2 class="form-signin-heading">Please sign in</h2>
             <#if Session.SPRING_SECURITY_LAST_EXCEPTION?exists>
-                <p>${Session.SPRING_SECURITY_LAST_EXCEPTION.message}</p>
+                <p class="error">${Session.SPRING_SECURITY_LAST_EXCEPTION.message}</p>
             </#if>
             <p>
                 <label for="username" class="sr-only">Username</label>
@@ -28,5 +31,7 @@
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
     </div>
+<script>
+</script>
 </body>
 </html>
