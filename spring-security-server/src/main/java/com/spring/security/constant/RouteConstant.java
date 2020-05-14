@@ -1,4 +1,4 @@
-package com.spring.security.config;
+package com.spring.security.constant;
 
 /**
  * @Author: daiguoqing
@@ -7,6 +7,8 @@ package com.spring.security.config;
  * @Version: spring-security-oauth 1.0
  */
 public interface RouteConstant {
+
+    String LOGIN_AUTHENTICATION = "/login/authentication";
 
     String LOGIN_ERROR = "/login?error";
 

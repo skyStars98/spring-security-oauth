@@ -1,6 +1,6 @@
 package com.spring.security.server.browser.handler;
 
-import com.spring.security.config.RouteConstant;
+import com.spring.security.constant.RouteConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
