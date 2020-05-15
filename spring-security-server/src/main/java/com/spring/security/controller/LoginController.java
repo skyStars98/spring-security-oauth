@@ -1,7 +1,8 @@
 package com.spring.security.controller;
 
 import com.spring.security.constant.SessionConstant;
-import com.spring.security.validate.ImageCode;
+import com.spring.security.validate.entity.ImageCode;
+import com.spring.security.validate.entity.SmsCode;
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
 import org.springframework.social.connect.web.SessionStrategy;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,12 @@ public class LoginController {
         return "login/loginPage";
     }
 
+    /**
+     * @desc 获取验证码
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @GetMapping("/login/verification/code")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCode imageCode = createImageCode(request);
@@ -39,6 +46,17 @@ public class LoginController {
         ImageIO.write(imageCode.getImage(), "JPEG", response.getOutputStream());
     }
 
+    /**
+     * @desc 短信验证码
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @GetMapping("/login/sms/code")
+    public void createSmsCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //SmsCode smsCode = createSmsCode(request);
+        //sessionStrategy.setAttribute(new ServletWebRequest(request), SessionConstant.SESSION_KEY, smsCode);
+    }
     /**
      * @desc 生成随机验证码
      * @param request

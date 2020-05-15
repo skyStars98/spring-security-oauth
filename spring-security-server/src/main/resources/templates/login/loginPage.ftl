@@ -62,5 +62,38 @@
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
     </div>
+
+    <!-- 短信登陆 -->
+    <div class="container">
+        <form class="form-signin" method="post" action="/login/mobile">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <#if Session.SPRING_SECURITY_LAST_EXCEPTION?exists>
+                <p class="error">${Session.SPRING_SECURITY_LAST_EXCEPTION.message}</p>
+            </#if>
+            <p>
+                <label for="username" class="sr-only">Mobile</label>
+                <input type="text" id="mobile" name="mobile" class="form-control" placeholder="Mobile" required="" autofocus="">
+            </p>
+            <p>
+                <label for="password" class="sr-only">SmsCode</label>
+                <input type="text" id="smsCode" name="smsCode" class="form-control" placeholder="SmsCode" required="">
+                <span>发送验证码</span>
+            </p>
+            <input name="_csrf" type="hidden" value="b901b99f-5cf2-4c34-ba94-34ffdf3b9d07">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+    </div>
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        (function (win, callback) {
+            callback(win);
+        }(window, function (win) {
+            $.ajax({
+                type: 'GET',
+                url: '/login/sms/code',
+                data: {'mobile': $('#mobile').val()}
+            });
+        }));
+    </script>
 </body>
 </html>

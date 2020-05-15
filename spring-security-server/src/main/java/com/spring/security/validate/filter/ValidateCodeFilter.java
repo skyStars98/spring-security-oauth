@@ -3,8 +3,7 @@ package com.spring.security.validate.filter;
 import com.spring.security.constant.RequestConstant;
 import com.spring.security.constant.RouteConstant;
 import com.spring.security.constant.SessionConstant;
-import com.spring.security.server.browser.handler.SecurityAuthenticationFailureHandler;
-import com.spring.security.validate.ImageCode;
+import com.spring.security.validate.entity.ImageCode;
 import com.spring.security.validate.exception.ValidateCodeException;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

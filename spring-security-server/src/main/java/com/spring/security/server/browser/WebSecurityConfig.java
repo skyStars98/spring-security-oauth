@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.rememberme.JdbcTokenRepos
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 /**
  * @Author: daiguoqing
@@ -29,6 +31,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     private SecurityAuthenticationFailureHandler securityAuthenticationFailureHandler;
+
+    @Resource
+    private UserDetailsService userDetailsServiceImpl;
+
+    @Resource
+    private DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,7 +55,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .loginPage("/login")
             .loginProcessingUrl("/login/authentication")
             .successHandler(securityAuthenticationSuccessHandler)
-            .failureHandler(securityAuthenticationFailureHandler);
+            .failureHandler(securityAuthenticationFailureHandler)
+            .and()
+            .rememberMe()
+            .tokenRepository(persistentTokenRepository())
+            .tokenValiditySeconds(3600) //记住我的有效时间为一小时 单位秒
+            .userDetailsService(userDetailsServiceImpl);
     }
 
     /**
@@ -66,6 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PersistentTokenRepository persistentTokenRepository(){
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        //tokenRepository.setCreateTableOnStartup(true); //自动创建JdbcTokenRepositoryImpl中的表
         return tokenRepository;
     }
 

@@ -1,4 +1,4 @@
-package com.spring.security.validate;
+package com.spring.security.validate.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
