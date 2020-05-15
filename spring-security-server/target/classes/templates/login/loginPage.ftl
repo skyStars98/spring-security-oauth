@@ -13,10 +13,23 @@
             color: rgba(255, 0, 0, 1)
         }
         #verification-code{
-            width: 50%;
+            width: 69%;
         }
         .code-group{
             display: flex;
+        }
+        .verification-image{
+            width: 85px;
+            height: 30px;
+            margin-left: 5px;
+            margin-top: 5px;
+        }
+        #remember-me{
+            width: 7%;
+        }
+        .remember{
+            font-size: 14px;
+            margin-top: -5px;
         }
     </style>
 </head>
@@ -38,13 +51,16 @@
             <p class="code-group">
                 <label for="password" class="sr-only">Verificationcode</label>
                 <input type="text" id="verification-code" name="verification-code" class="form-control" placeholder="Verification-code" required="">
-                <img src="/login/verification/code">
+                <img src="/login/verification/code" class="verification-image">
+            </p>
+            <p class="code-group">
+                <label for="password" class="sr-only">Rememberme</label>
+                <input type="checkbox" id="remember-me" name="remember-me" class="form-control" required="">
+                <span class="remember">记住我</span>
             </p>
             <input name="_csrf" type="hidden" value="b901b99f-5cf2-4c34-ba94-34ffdf3b9d07">
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
     </div>
-<script>
-</script>
 </body>
 </html>

@@ -6,8 +6,10 @@ package com.spring.security.constant;
  * @Time: 20:00
  * @Version: spring-security-oauth 1.0
  */
-public interface MethodConstant {
+public interface RequestConstant {
 
     String POST = "post";
+
+    String VERIFICATION_CODE= "verification-code";
 
 }

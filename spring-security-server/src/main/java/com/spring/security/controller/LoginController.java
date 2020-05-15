@@ -39,6 +39,11 @@ public class LoginController {
         ImageIO.write(imageCode.getImage(), "JPEG", response.getOutputStream());
     }
 
+    /**
+     * @desc 生成随机验证码
+     * @param request
+     * @return
+     */
     private ImageCode createImageCode(HttpServletRequest request) {
         int width = 80; // 验证码图片宽度
         int height = 36; // 验证码图片长度
