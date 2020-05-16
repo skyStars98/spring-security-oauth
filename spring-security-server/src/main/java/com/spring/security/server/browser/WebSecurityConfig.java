@@ -1,10 +1,13 @@
 package com.spring.security.server.browser;
 
+import com.spring.security.mode.mobile.MobileAuthenticationFilter;
+import com.spring.security.mode.mobile.MobileAuthenticationProvider;
 import com.spring.security.server.browser.handler.SecurityAuthenticationFailureHandler;
 import com.spring.security.server.browser.handler.SecurityAuthenticationSuccessHandler;
 import com.spring.security.validate.filter.ValidateCodeFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,6 +36,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private SecurityAuthenticationFailureHandler securityAuthenticationFailureHandler;
 
     @Resource
+    private MobileAuthenticationProvider mobileAuthenticationProvider;
+
+    @Resource
     private UserDetailsService userDetailsServiceImpl;
 
     @Resource
@@ -45,12 +51,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
         validateCodeFilter.setAuthenticationFailureHandler(securityAuthenticationFailureHandler);
 
+        //手机登录
+        http.authenticationProvider(mobileAuthenticationProvider) //将手机登录的mobileAuthenticationProvider添加到AuthenticationManager管理的集合中
+            .addFilterAfter(mobileAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         http.csrf().disable()
             .authorizeRequests()
-            .antMatchers(new String[]{"/login", "/login/authentication", "/login/verification/code"}).permitAll()
+            .antMatchers(new String[]{"/login", "/login/authentication", "/login/verification/code", "/login/sms/code"}).permitAll()
             .anyRequest().authenticated()
             .and()
-            .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class) //将验证码过滤器加到用户过滤器前面
             .formLogin()
             .loginPage("/login")
             .loginProcessingUrl("/login/authentication")
@@ -61,6 +71,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .tokenRepository(persistentTokenRepository())
             .tokenValiditySeconds(3600) //记住我的有效时间为一小时 单位秒
             .userDetailsService(userDetailsServiceImpl);
+    }
+
+    /**
+     * @desc 认证管理器
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     /**
@@ -82,6 +102,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         tokenRepository.setDataSource(dataSource);
         //tokenRepository.setCreateTableOnStartup(true); //自动创建JdbcTokenRepositoryImpl中的表
         return tokenRepository;
+    }
+
+    /**
+     * @desc 手机登录
+     * @return
+     */
+    @Bean
+    public MobileAuthenticationFilter mobileAuthenticationFilter() throws Exception {
+        MobileAuthenticationFilter authenticationFilter = new MobileAuthenticationFilter();
+        authenticationFilter.setAuthenticationManager(authenticationManager()); //设置认证管理器 用于获取手机登录认证的provider
+        authenticationFilter.setAuthenticationSuccessHandler(securityAuthenticationSuccessHandler);
+        authenticationFilter.setAuthenticationFailureHandler(securityAuthenticationFailureHandler);
+        mobileAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+        return authenticationFilter;
     }
 
 }

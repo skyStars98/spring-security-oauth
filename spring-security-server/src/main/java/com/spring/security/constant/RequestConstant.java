@@ -8,8 +8,8 @@ package com.spring.security.constant;
  */
 public interface RequestConstant {
 
-    String POST = "post";
-
     String VERIFICATION_CODE= "verification-code";
+
+    String MOBILE = "mobile";
 
 }

@@ -13,9 +13,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SmsCodeGenerator {
 
-    public SmsCode randomCode(){
-        /*String code = RandomStringUtils.randomNumeric();
-        return new SmsCode(code, );*/
-        return null;
+    public SmsCode generate(){
+        String code = RandomStringUtils.randomNumeric(6);
+        return new SmsCode(code, 60);
     }
 }

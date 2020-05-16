@@ -31,6 +31,16 @@
             font-size: 14px;
             margin-top: -5px;
         }
+        .sms-group{
+            position: relative;
+        }
+        .send{
+            width: 100px;
+            display: inline-block;
+            position: absolute;
+            left: 310px;
+            top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -49,12 +59,12 @@
                 <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
             </p>
             <p class="code-group">
-                <label for="password" class="sr-only">Verificationcode</label>
+                <label for="verification-code" class="sr-only">Verificationcode</label>
                 <input type="text" id="verification-code" name="verification-code" class="form-control" placeholder="Verification-code" required="">
                 <img src="/login/verification/code" class="verification-image">
             </p>
             <p class="code-group">
-                <label for="password" class="sr-only">Rememberme</label>
+                <label for="remember-me" class="sr-only">Rememberme</label>
                 <input type="checkbox" id="remember-me" name="remember-me" class="form-control" required="">
                 <span class="remember">记住我</span>
             </p>
@@ -71,13 +81,13 @@
                 <p class="error">${Session.SPRING_SECURITY_LAST_EXCEPTION.message}</p>
             </#if>
             <p>
-                <label for="username" class="sr-only">Mobile</label>
+                <label for="mobile" class="sr-only">Mobile</label>
                 <input type="text" id="mobile" name="mobile" class="form-control" placeholder="Mobile" required="" autofocus="">
             </p>
-            <p>
-                <label for="password" class="sr-only">SmsCode</label>
+            <p class="sms-group">
+                <label for="smsCode" class="sr-only">SmsCode</label>
                 <input type="text" id="smsCode" name="smsCode" class="form-control" placeholder="SmsCode" required="">
-                <span>发送验证码</span>
+                <a href="javascript:void (0)" class="send">发送验证码</a>
             </p>
             <input name="_csrf" type="hidden" value="b901b99f-5cf2-4c34-ba94-34ffdf3b9d07">
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
@@ -88,11 +98,30 @@
         (function (win, callback) {
             callback(win);
         }(window, function (win) {
-            $.ajax({
-                type: 'GET',
-                url: '/login/sms/code',
-                data: {'mobile': $('#mobile').val()}
-            });
+            let method = {
+                argument: {
+                },
+                sendSmsCode: function () {
+                    let send = document.querySelector('.send');
+                    send.onclick = function () {
+                        console.log($('#mobile').val())
+                        $.ajax({
+                            type: 'GET',
+                            url: '/login/sms/code',
+                            data: {'mobile': $('#mobile').val()},
+                            success: function (response) {
+
+                            }
+                        });
+                    }
+                },
+                execute: function () {
+                    this.sendSmsCode();
+                }
+            }
+
+            method.execute();
+
         }));
     </script>
 </body>

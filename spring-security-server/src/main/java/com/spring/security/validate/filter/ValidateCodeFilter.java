@@ -1,5 +1,6 @@
 package com.spring.security.validate.filter;
 
+import com.spring.security.constant.ModeConstant;
 import com.spring.security.constant.RequestConstant;
 import com.spring.security.constant.RouteConstant;
 import com.spring.security.constant.SessionConstant;
@@ -38,7 +39,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         if(StringUtils.equals(RouteConstant.LOGIN_AUTHENTICATION, httpServletRequest.getRequestURI())
-                && StringUtils.equalsIgnoreCase(httpServletRequest.getMethod(), RequestConstant.POST)){
+                && StringUtils.equalsIgnoreCase(httpServletRequest.getMethod(), ModeConstant.POST)){
 
             try {
                 validate(new ServletWebRequest(httpServletRequest));

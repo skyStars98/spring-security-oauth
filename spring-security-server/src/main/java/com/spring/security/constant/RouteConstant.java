@@ -12,4 +12,6 @@ public interface RouteConstant {
 
     String LOGIN_ERROR = "/login?error";
 
+    String LOGIN_MOBILE = "/login/mobile";
+
 }
