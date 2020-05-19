@@ -2,6 +2,8 @@ package com.spring.security.mode.mobile;
 
 import com.spring.security.constant.ModeConstant;
 import com.spring.security.constant.RouteConstant;
+import com.spring.security.constant.SessionConstant;
+import com.spring.security.validate.entity.SmsCode;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -9,10 +11,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.social.connect.web.HttpSessionSessionStrategy;
+import org.springframework.social.connect.web.SessionStrategy;
 import org.springframework.util.Assert;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * @Author: daiguoqing
@@ -27,6 +33,8 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
     private String smsCodeParameter = "smsCode";
     private boolean postOnly = true; //是否只处理post请求
 
+    private SessionStrategy session = new HttpSessionSessionStrategy();
+
     //当前过滤器处理的请求地址
     public MobileAuthenticationFilter() {
         super(new AntPathRequestMatcher(RouteConstant.LOGIN_MOBILE, ModeConstant.POST));
@@ -38,12 +46,16 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
         } else {
             String mobile = this.obtainMobile(request);
             String smsCode = this.obtainSmsCode(request);
+            SmsCode codeInSession = (SmsCode) session.getAttribute(new ServletWebRequest(request), SessionConstant.SMSCODE_KEY);
 
             if (StringUtils.isBlank(mobile)) {
                 throw new AuthenticationServiceException("手机号码不能为空");
             }
-            if(StringUtils.isBlank(smsCode)){
-               throw new AuthenticationServiceException("验证码不能为空");
+            if(Objects.isNull(codeInSession) || !StringUtils.equals(codeInSession.getCode(), smsCode)){
+                throw new AuthenticationServiceException("验证码不正确");
+            }
+            if(codeInSession.isExpired()){
+                throw new AuthenticationServiceException("验证码已失效");
             }
 
             mobile = mobile.trim();

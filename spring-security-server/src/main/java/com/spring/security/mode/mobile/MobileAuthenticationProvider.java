@@ -1,7 +1,8 @@
 package com.spring.security.mode.mobile;
 
+import com.spring.security.abstraction.AbstractAuthenticationProvider;
 import lombok.Data;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,7 +20,7 @@ import java.util.Objects;
  */
 @Data
 @Component
-public class MobileAuthenticationProvider implements AuthenticationProvider {
+public class MobileAuthenticationProvider extends AbstractAuthenticationProvider {
 
     private UserDetailsService userDetailsService;
 

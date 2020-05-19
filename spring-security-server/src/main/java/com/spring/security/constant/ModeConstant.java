@@ -8,7 +8,7 @@ package com.spring.security.constant;
  */
 public interface ModeConstant {
 
-    String POST = "post";
+    String POST = "POST";
 
     String JPEG = "JPEG";
 }

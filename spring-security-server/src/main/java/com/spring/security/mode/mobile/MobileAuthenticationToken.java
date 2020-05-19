@@ -14,7 +14,6 @@ import java.util.Collection;
 public class MobileAuthenticationToken extends AbstractAuthenticationToken {
     private static final long serialVersionUID = 520L;
     private final Object principal; //用户信息
-    //private Object credentials; //用户密码
 
     //认证成功前provider调用的构造函数
     public MobileAuthenticationToken(String mobile) {
@@ -51,6 +50,5 @@ public class MobileAuthenticationToken extends AbstractAuthenticationToken {
 
     public void eraseCredentials() {
         super.eraseCredentials();
-        //this.credentials = null;
     }
 }

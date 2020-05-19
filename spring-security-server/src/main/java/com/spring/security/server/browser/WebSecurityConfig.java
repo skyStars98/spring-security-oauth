@@ -8,6 +8,7 @@ import com.spring.security.validate.filter.ValidateCodeFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private DataSource dataSource;
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -57,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
             .authorizeRequests()
-            .antMatchers(new String[]{"/login", "/login/authentication", "/login/verification/code", "/login/sms/code"}).permitAll()
+            .antMatchers(new String[]{"/login", "/login/**"}).permitAll()
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class) //将验证码过滤器加到用户过滤器前面
@@ -79,8 +81,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * @throws Exception
      */
     @Bean
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     /**
@@ -104,6 +106,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return tokenRepository;
     }
 
+
+    /**
+     * @desc 账号密码认证 provider
+     * @return
+     */
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+        return daoAuthenticationProvider;
+    }
+
+
     /**
      * @desc 手机登录
      * @return
@@ -111,7 +127,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public MobileAuthenticationFilter mobileAuthenticationFilter() throws Exception {
         MobileAuthenticationFilter authenticationFilter = new MobileAuthenticationFilter();
-        authenticationFilter.setAuthenticationManager(authenticationManager()); //设置认证管理器 用于获取手机登录认证的provider
+        authenticationFilter.setAuthenticationManager(authenticationManagerBean()); //设置认证管理器 用于获取手机登录认证的provider
         authenticationFilter.setAuthenticationSuccessHandler(securityAuthenticationSuccessHandler);
         authenticationFilter.setAuthenticationFailureHandler(securityAuthenticationFailureHandler);
         mobileAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
