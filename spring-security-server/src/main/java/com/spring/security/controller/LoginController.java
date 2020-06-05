@@ -60,7 +60,7 @@ public class LoginController {
     @GetMapping("/login/verification/code")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCode imageCode = imageCodeGenerator.createImageCode(request);
-        sessionStrategy.setAttribute(new ServletWebRequest(request), SessionConstant.SESSION_KEY, imageCode);
+        sessionStrategy.setAttribute(new ServletWebRequest(request), SessionConstant.SESSION_KEY, new ImageCode(imageCode.getCode(), imageCode.getExpireTime()));
         ImageIO.write(imageCode.getImage(), ModeConstant.JPEG, response.getOutputStream());
     }
 

@@ -23,7 +23,7 @@ import java.io.IOException;
 @Slf4j
 public class SecurityAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    //AuthenticationSuccessHandler接口：登陆失败后进行处理的处理器
+    //AuthenticationSuccessHandler接口：登陆成功后进行处理的处理器
     //SavedRequestAwareAuthenticationSuccessHandler是上面接口的实现类，记录了上一次请求的路径
     //RequestCache：提供了缓存客户端请求的能力 通过HttpSessionRequestCache获取
     @Override

@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class SmsCode {
+public class SmsCode implements Serializable {
 
     /**
      * code验证码

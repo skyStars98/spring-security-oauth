@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @NoArgsConstructor
-public class ImageCode {
+public class ImageCode implements Serializable {
 
     /**
      * 验证码图片
@@ -30,6 +31,16 @@ public class ImageCode {
      * 过期时间 单位：秒
      */
     private LocalDateTime expireTime;
+
+    /**
+     * 构造函数
+     * @param code
+     * @param expireTime
+     */
+    public ImageCode(String code, LocalDateTime expireTime){
+        this.code = code;
+        this.expireTime = expireTime;
+    }
 
     /**
      * 构造函数

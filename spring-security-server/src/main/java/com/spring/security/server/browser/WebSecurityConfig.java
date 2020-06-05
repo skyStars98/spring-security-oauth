@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -35,6 +36,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     private SecurityAuthenticationFailureHandler securityAuthenticationFailureHandler;
+
+    @Resource
+    private SessionInformationExpiredStrategy authenticationExpiredSessionStrategy;
 
     @Resource
     private MobileAuthenticationProvider mobileAuthenticationProvider;
@@ -72,7 +76,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .rememberMe()
             .tokenRepository(persistentTokenRepository())
             .tokenValiditySeconds(3600) //记住我的有效时间为一小时 单位秒
-            .userDetailsService(userDetailsServiceImpl);
+            .userDetailsService(userDetailsServiceImpl)
+            .and()
+            .sessionManagement()
+            .invalidSessionUrl("/login") //session失效 跳转的地址
+            .maximumSessions(1) //最大session数量 如果设置为1 表示一个用户只能有一个session（同一时间内只能有一个有效的登录）
+            .maxSessionsPreventsLogin(true) //当前用户的session数量达到最大值后阻止用户的登录行为
+            .expiredSessionStrategy(authenticationExpiredSessionStrategy); //会话过期策略（处理session并发问题）
     }
 
     /**

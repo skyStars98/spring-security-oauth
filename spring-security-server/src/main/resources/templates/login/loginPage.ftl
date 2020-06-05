@@ -65,7 +65,7 @@
             </p>
             <p class="code-group">
                 <label for="remember-me" class="sr-only">Rememberme</label>
-                <input type="checkbox" id="remember-me" name="remember-me" class="form-control" required="">
+                <input type="checkbox" id="remember-me" name="remember-me" class="form-control">
                 <span class="remember">记住我</span>
             </p>
             <input name="_csrf" type="hidden" value="b901b99f-5cf2-4c34-ba94-34ffdf3b9d07">
@@ -121,6 +121,7 @@
             }
 
             method.execute();
+
 
         }));
     </script>
