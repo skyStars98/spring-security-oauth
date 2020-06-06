@@ -15,8 +15,8 @@ import java.util.Objects;
  * @Time: 6:00 下午
  * @Version: spring-security-oauth 1.0
  */
-@RestController
 @Slf4j
+@RestController
 public class UserController {
 
     @GetMapping("/hello")

@@ -51,6 +51,11 @@ public class LoginController {
         return "login/loginPage";
     }
 
+    @GetMapping("/index")
+    public String index(){
+        return "index";
+    }
+
     /**
      * @desc 获取验证码
      * @param request

@@ -10,8 +10,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>spring-security-server</module>
         <module>spring-eureka-server</module>
+        <module>spring-security-server</module>
+        <module>spring-security-resource</module>
     </modules>
 
     <properties>

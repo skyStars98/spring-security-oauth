@@ -1,0 +1,9 @@
+server:
+  port: 8010
+  servlet:
+    context-path: /
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/

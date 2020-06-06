@@ -1,4 +1,4 @@
-package com.spring.security.server.browser;
+package com.spring.security.config;
 
 import com.spring.security.mode.mobile.MobileAuthenticationFilter;
 import com.spring.security.mode.mobile.MobileAuthenticationProvider;
@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
@@ -29,7 +30,7 @@ import javax.sql.DataSource;
  * @Version: spring-security-oauth 1.0
  */
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Resource
     private SecurityAuthenticationSuccessHandler securityAuthenticationSuccessHandler;
@@ -44,6 +45,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private MobileAuthenticationProvider mobileAuthenticationProvider;
 
     @Resource
+    private LogoutSuccessHandler authenticationLogoutSuccessHandler;
+
+    @Resource
     private UserDetailsService userDetailsServiceImpl;
 
     @Resource
@@ -56,6 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //自定义验证码过滤器
         ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
         validateCodeFilter.setAuthenticationFailureHandler(securityAuthenticationFailureHandler);
+        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class); //将验证码过滤器加到用户过滤器前面
 
         //手机登录
         http.authenticationProvider(mobileAuthenticationProvider) //将手机登录的mobileAuthenticationProvider添加到AuthenticationManager管理的集合中
@@ -63,26 +68,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
             .authorizeRequests()
-            .antMatchers(new String[]{"/login", "/login/**"}).permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class) //将验证码过滤器加到用户过滤器前面
+                .antMatchers(new String[]{"/login", "/login/**"}).permitAll()
+                .anyRequest().authenticated()
+                .and()
             .formLogin()
-            .loginPage("/login")
-            .loginProcessingUrl("/login/authentication")
-            .successHandler(securityAuthenticationSuccessHandler)
-            .failureHandler(securityAuthenticationFailureHandler)
-            .and()
+                .loginPage("/login")
+                .loginProcessingUrl("/login/authentication")
+                .successHandler(securityAuthenticationSuccessHandler)
+                .failureHandler(securityAuthenticationFailureHandler)
+                .and()
+            .logout()
+                .logoutUrl("/signOut")
+                .logoutSuccessHandler(authenticationLogoutSuccessHandler)
+                .deleteCookies("JSESSIONID") // 退出成功后删除指定的cookie
+                .and()
             .rememberMe()
-            .tokenRepository(persistentTokenRepository())
-            .tokenValiditySeconds(3600) //记住我的有效时间为一小时 单位秒
-            .userDetailsService(userDetailsServiceImpl)
-            .and()
+                .tokenRepository(persistentTokenRepository())
+                .tokenValiditySeconds(3600) //记住我的有效时间为一小时 单位秒
+                .userDetailsService(userDetailsServiceImpl)
+                .and()
             .sessionManagement()
-            .invalidSessionUrl("/login") //session失效 跳转的地址
-            .maximumSessions(1) //最大session数量 如果设置为1 表示一个用户只能有一个session（同一时间内只能有一个有效的登录）
-            .maxSessionsPreventsLogin(true) //当前用户的session数量达到最大值后阻止用户的登录行为
-            .expiredSessionStrategy(authenticationExpiredSessionStrategy); //会话过期策略（处理session并发问题）
+                .invalidSessionUrl("/login") //session失效 跳转的地址
+                .maximumSessions(1) //最大session数量 如果设置为1 表示一个用户只能有一个session（同一时间内只能有一个有效的登录）
+                .maxSessionsPreventsLogin(true) //当前用户的session数量达到最大值后阻止用户的登录行为
+                .expiredSessionStrategy(authenticationExpiredSessionStrategy); //会话过期策略（处理session并发问题）
+
     }
 
     /**
@@ -137,7 +147,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public MobileAuthenticationFilter mobileAuthenticationFilter() throws Exception {
         MobileAuthenticationFilter authenticationFilter = new MobileAuthenticationFilter();
-        authenticationFilter.setAuthenticationManager(authenticationManagerBean()); //设置认证管理器 用于获取手机登录认证的provider
+        authenticationFilter.setAuthenticationManager(authenticationManagerBean()); //设置认证管理器 用于将mobileToken与mobileProvider进行匹配
         authenticationFilter.setAuthenticationSuccessHandler(securityAuthenticationSuccessHandler);
         authenticationFilter.setAuthenticationFailureHandler(securityAuthenticationFailureHandler);
         mobileAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);

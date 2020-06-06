@@ -17,14 +17,16 @@ import java.io.IOException;
  * @Time: 9:05 下午
  * @Version: spring-security-oauth 1.0
  */
-@Component
 @Slf4j
+@Component
 public class SecurityAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    //AuthenticationFailureHandler接口：登陆成功后进行处理的处理器
-    //SimpleUrlAuthenticationFailureHandler是上面接口的实现类，记录了上一次请求的路径
-    //HttpSessionRequestCache：提供了缓存客户端请求的能力
-    //DefaultFailureUrl：失败后的重定向地址，只有成功的时候才会从request缓存中取出重定向地址，失败需要自定义
+    /**
+     * AuthenticationFailureHandler接口：登陆成功后进行处理的处理器
+     * SimpleUrlAuthenticationFailureHandler是上面接口的实现类，记录了上一次请求的路径
+     * HttpSessionRequestCache：提供了缓存客户端请求的能力
+     * DefaultFailureUrl：失败后的重定向地址，只有成功的时候才会从request缓存中取出重定向地址，失败需要自定义
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.info("登陆失败");
