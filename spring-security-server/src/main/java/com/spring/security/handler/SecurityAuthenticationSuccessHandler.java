@@ -1,4 +1,4 @@
-package com.spring.security.server.browser.handler;
+package com.spring.security.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

@@ -40,7 +40,8 @@ eureka:
       defaultZone: http://localhost:7001/eureka/
 
 oauth2:
-  client-id: universe
-  client-secret: universesecret
+  client-id: client1
+  client-secret: secret
+  token-expire-second: 3600
 
 

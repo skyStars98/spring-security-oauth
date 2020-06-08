@@ -1,4 +1,4 @@
-package com.spring.security.server.browser.handler;
+package com.spring.security.handler;
 
 import com.spring.security.constant.RouteConstant;
 import lombok.extern.slf4j.Slf4j;
