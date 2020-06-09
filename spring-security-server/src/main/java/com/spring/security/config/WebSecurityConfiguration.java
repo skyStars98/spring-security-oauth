@@ -126,7 +126,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return tokenRepository;
     }
 
-
     /**
      * @desc 账号密码认证 provider
      * @return
@@ -138,7 +137,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
         return daoAuthenticationProvider;
     }
-
 
     /**
      * @desc 手机登录

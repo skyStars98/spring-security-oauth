@@ -11,6 +11,11 @@
 
     <artifactId>spring-security-server</artifactId>
 
+    <properties>
+        <social.version>1.1.6.RELEASE</social.version>
+        <guava.version>28.2-jre</guava.version>
+    </properties>
+
     <dependencies>
         <!-- 引入security与oauth2依赖 -->
         <dependency>
@@ -36,8 +41,15 @@
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-config</artifactId>
-            <version>1.1.6.RELEASE</version>
+            <version>${social.version}</version>
         </dependency>
+        <!-- Google guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
         <!-- 引入freemarker包 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

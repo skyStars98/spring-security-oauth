@@ -11,4 +11,7 @@ public interface SessionConstant {
     String SESSION_KEY = "SESSION_KEY_IMAGE_CODE";
 
     String SMSCODE_KEY = "SESSION_KEY_SMS_CODE";
+
+    String SESSION_USERINFO = "userInfo";
+
 }

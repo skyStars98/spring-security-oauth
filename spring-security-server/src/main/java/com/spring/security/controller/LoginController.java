@@ -83,4 +83,10 @@ public class LoginController {
         smsCodeSenderServiceImpl.sender(mobile, smsCode.getCode());
     }
 
+    @GetMapping("/login/callback")
+    public void loginCallback(HttpServletRequest request, HttpServletResponse response){
+        String code = request.getParameter("code");
+
+    }
+
 }

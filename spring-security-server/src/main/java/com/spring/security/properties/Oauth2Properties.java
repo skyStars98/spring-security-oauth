@@ -17,9 +17,34 @@ public class Oauth2Properties {
 
     public static final String OAUTH2 = "oauth2";
 
+    /**
+     * 客户端标识
+     */
     private String clientId;
 
+    /**
+     * 客户端密钥
+     */
     private String clientSecret;
 
+    /**
+     * token过期时间 单位：秒
+     */
     private String tokenExpireSecond;
+
+    /**
+     * 请求授权地址
+     */
+    private String oauthAuthorizeUrl;
+
+    /**
+     * 授权码回调地址
+     */
+    private String codeCallbackUrl;
+
+    /**
+     * 请求token地址
+     */
+    private String accessTokenUrl;
+
 }
