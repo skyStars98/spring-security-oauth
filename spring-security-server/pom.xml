@@ -49,7 +49,6 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-
         <!-- 引入freemarker包 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

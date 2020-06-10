@@ -1,7 +1,5 @@
 package com.spring.security.interceptor;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.spring.security.constant.SessionConstant;
 import com.spring.security.properties.Oauth2Properties;
 import com.spring.security.utils.GuavaUtil;
