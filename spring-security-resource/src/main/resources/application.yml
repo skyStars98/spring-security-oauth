@@ -7,3 +7,11 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:7001/eureka/
+
+security: #此配置是资源服务器与认证服务器交互使用
+  oauth2:
+    client:
+      client-id: guaneoms
+      client-secret: secret
+    resource:
+      token-info-uri: http://i.guanph.gov.cn/oauth/check_token #资源服务器通过这个地址去认证服务器校验token是否有效

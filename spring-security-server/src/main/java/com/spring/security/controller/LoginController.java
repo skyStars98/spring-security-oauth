@@ -1,16 +1,15 @@
 package com.spring.security.controller;
 
-import com.spring.security.constant.ModeConstant;
-import com.spring.security.constant.RequestConstant;
-import com.spring.security.constant.SessionConstant;
+import com.spring.security.constant.*;
+import com.spring.security.entity.SysUserAuths;
 import com.spring.security.properties.Oauth2Properties;
+import com.spring.security.properties.Oauth2Properties.Client;
 import com.spring.security.validate.code.ImageCodeGenerator;
 import com.spring.security.validate.entity.ImageCode;
 import com.spring.security.validate.entity.SmsCode;
 import com.spring.security.validate.sms.SmsCodeGenerator;
 import com.spring.security.validate.sms.service.SmsCodeSenderService;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,14 +28,15 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
+import java.util.Optional;
 
 /**
  * @Author: daiguoqing
@@ -61,7 +61,7 @@ public class LoginController {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
@@ -102,24 +102,88 @@ public class LoginController {
         smsCodeSenderServiceImpl.sender(mobile, smsCode.getCode());
     }
 
-    @GetMapping("/login/callback")
-    public void loginCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String code = request.getParameter("code");
-        String authorization = oauth2Properties.getClientId() + ":" + oauth2Properties.getClientSecret();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Basic " + Base64.encode(authorization.getBytes(StandardCharsets.UTF_8)));
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("code", code);
-        params.add("redirect_uri", oauth2Properties.getCodeCallbackUrl());
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(oauth2Properties.getAccessTokenUrl(), HttpMethod.POST, entity, String.class);
-        if(responseEntity.getStatusCode().is2xxSuccessful()){
-            String body = responseEntity.getBody();
-            Map map = objectMapper.readValue(body, Map.class);
-            System.out.println(map);
+    /**
+     * @desc
+     * @param request
+     * @param response
+     */
+    @GetMapping("/oauth/callback")
+    public void loginCallBack(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            Client client = oauth2Properties.getClient();
+            String code = request.getParameter(AuthorizeConstant.CODE);
+            String authorize = client.getClientId() + ":" + client.getClientSecret();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.AUTHORIZATION, "Basic " + Base64.encode(authorize.getBytes(StandardCharsets.UTF_8)));
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add(AuthorizeConstant.GRANT_TYPE, AuthorizeConstant.AUTHORIZATION_CODE);
+            params.add(AuthorizeConstant.CODE, code);
+            params.add(AuthorizeConstant.REDIRECT_URI, client.getOauthCallbackUrl());
+
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(client.getAccessTokenUrl(), HttpMethod.POST, entity, String.class);
+
+            if(responseEntity.getStatusCode().is2xxSuccessful()){
+                String body = responseEntity.getBody();
+                Map map = mapper.readValue(body, Map.class);
+                String access_token = map.get(AuthorizeConstant.ACCESS_TOKEN).toString();
+                this.loginIn(request, response, access_token);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
+    }
+
+    @GetMapping("/signout")
+    public void logout(HttpSession session, HttpServletResponse response) throws IOException {
+        session.removeAttribute(BasicConstant.SESSION_USERINFO);
+        session.invalidate();
+        response.sendRedirect(HttpConstant.LOGOUT);
+    }
+
+    private void loginIn(HttpServletRequest request, HttpServletResponse response, String accessToken) throws IOException {
+        String resourceUrl = oauth2Properties.getResource().getOauthResourceUrl();
+
+        HttpHeaders headers = new HttpHeaders();
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add(AuthorizeConstant.ACCESS_TOKEN, accessToken);
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(resourceUrl, HttpMethod.POST, entity, String.class);
+
+        if(responseEntity.getStatusCode().is2xxSuccessful()){
+            String body = responseEntity.getBody();
+            Map map = mapper.readValue(body, Map.class);
+
+            Map principal = (Map) map.get(AuthorizeConstant.PRINCIPAL);
+            String json = mapper.writeValueAsString(principal.get(BasicConstant.BUSINESS_SYSUSERAUTHS));
+            SysUserAuths sysUserAuths = mapper.readValue(json, SysUserAuths.class);
+
+            HttpSession session = request.getSession();
+            session.setAttribute(BasicConstant.SESSION_USERINFO, sysUserAuths);
+
+            Cookie[] cookies = request.getCookies();
+            Optional<Cookie> cookie = Arrays.stream(cookies)
+                    .filter(cookie1 -> cookie1.getName().equals(BasicConstant.USER_URI)).findFirst();
+
+            if(cookie.isPresent()){
+                Cookie cookie1 = cookie.get();
+                cookie1.setMaxAge(0);
+                cookie1.setDomain(HttpConstant.DOMAIN);
+                cookie1.setPath(HttpConstant.COOKIE_PATH);
+                response.addCookie(cookie1);
+                response.sendRedirect(cookie.get().getValue());
+                return;
+            }
+
+            response.sendRedirect(HttpConstant.HOME_PAGE);
+        }
     }
 
 }

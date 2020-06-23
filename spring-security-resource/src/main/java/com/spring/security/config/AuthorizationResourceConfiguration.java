@@ -1,7 +1,9 @@
 package com.spring.security.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
 /**
  * @Author: daiguoqing
@@ -11,5 +13,13 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
  */
 @Configuration
 @EnableResourceServer //资源服务器
-public class AuthorizationResourceConfiguration {
+public class AuthorizationResourceConfiguration extends ResourceServerConfigurerAdapter {
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeRequests()
+                .anyRequest().authenticated(); //所有资源请求都必须认证通过且授权
+    }
+
 }

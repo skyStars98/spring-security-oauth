@@ -40,11 +40,13 @@ eureka:
       defaultZone: http://localhost:7001/eureka/
 
 oauth2:
-  client-id: client1
-  client-secret: secret
-  token-expire-second: 3600
-  oauth-authorize-url: http://localhost:8060/oauth/authorize
-  code-callback-url: http://localhost:8060/login/callback
-  access-token-url: http://localhost:8060/oauth/token
+  client:
+    client-id: guaneoms
+    client-secret: secret
+    oauth-authorize-url: http://i.guanph.gov.cn/oauth/authorize
+    oauth-callback-url: http://eoms.guanph.gov.cn/oauth/callback
+    access-token-url: http://i.guanph.gov.cn/oauth/token
+  resource:
+    oauth-resource-url: http://resource.guanph.gov.cn/user/me
 
 

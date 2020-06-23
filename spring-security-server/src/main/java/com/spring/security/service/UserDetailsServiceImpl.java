@@ -1,5 +1,7 @@
 package com.spring.security.service;
 
+import com.spring.security.entity.SysUser;
+import com.spring.security.entity.SysUserAuths;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -28,7 +30,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("登录用户名：{}", username);
-        return User.withUsername(username).password("{noop}123456").authorities(AuthorityUtils.commaSeparatedStringToAuthorityList("Admin"))
-                .disabled(false).accountExpired(false).credentialsExpired(false).accountLocked(false).build();
+
+        SysUserAuths user = new SysUserAuths();
+        user.setUsername(username);
+        user.setPassword("{noop}123456");
+        user.setRole("Admin");
+
+        SysUser sysUser = new SysUser(user.getUsername(), user.getPassword(), AuthorityUtils.createAuthorityList(user.getRole()), user);
+        sysUser.getSysUserAuths().setPassword("");
+
+        return sysUser;
     }
 }
