@@ -13,6 +13,7 @@
         <module>spring-eureka-server</module>
         <module>spring-security-server</module>
         <module>spring-security-resource</module>
+        <module>spring-gateway-server</module>
     </modules>
 
     <properties>
